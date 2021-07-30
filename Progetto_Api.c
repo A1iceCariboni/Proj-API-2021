@@ -15,75 +15,78 @@ int num, dist;
 
 
 
-int k, d, size;
+int k, d, size, heapsize;
 
 //costruisce min heap
-void min_heapify(struct vertex_from0 vert[], int n, heapsize){
-int i, dx, sx, min;
+void min_heapify(struct vertex_from0 vert[], int n){
+int dx, sx, min;
 struct vertex_from0 v;
-   sx = 2 * i;
-   dx = (2 * i) + 1;
-   if((sx < heapsize)&&(vert.dist[l] < vert.dist[i]){
-   		  min = l;
+   sx = 2 * n;
+   dx = (2 * n) + 1;
+   if((sx < heapsize)&&(vert[sx].dist < vert[n].dist)){
+   		  min = sx;
 	}else{
-		min = i;
+		min = n;
 	}
-	if((dx < heapsize) && (vert.dist[r] < vert.dist[i]){
-		min = r;
+	if((dx < heapsize) && (vert[dx].dist < vert[n].dist)){
+		min = dx;
 	}
-	if(min != i){
+	if(min != n){
 	v = vert[min];
-	vert[min] = vert[i];
-	vert[i] = v;
+	vert[min] = vert[n];
+	vert[n] = v;
 	min_heapify(vert, min);	     	  	  
 	}
 
 }
 
 //restituisce il minimo e sistema lo heap
-struct vertex get_min(struct vertex vert[], int *heapsize){
-	struct vertex min = vert[0];
+struct vertex_from0 get_min(struct vertex_from0 vert[]){
+	struct vertex_from0 min = vert[0];
 	
 	vert[0] = vert[heapsize - 1];
 	heapsize--;
-	min_heapify(vert,0,heapsize);
+	min_heapify(vert,0);
 	vert[heapsize] = min;
 	return min;
 }
 
-int djkstra(long long graph[]){
- struct vertex_from0 vertex[d], v, u, *nodes;
- int row;
- int heapsize = d;
- long long dis, sumdis;
+long int djkstra(int graph[]){
+ struct vertex_from0 vertex[d], u;
+ int start, i, j;
+ heapsize = d;
+ int dist;
+ long int sum_dis;
  
  vertex[0].dist = 0;
  vertex[0].num = 0;
- nodes[0] -> vertex[0];
 	for(i = 1; i < d; i++){
-		vertex[i].dist = MAX_DIST;
+		vertex[i].dist = INT_MAX;
 		vertex[i].num = i;
-		nodes[i] -> vertex[i];
 	}
 	 
  for(i = d/2 - 1; i >= 0; i--){
- 	min_heapify(vert, i);
+ 	min_heapify(vertex, i);
  }
  
  while(heapsize > 0){
-	u = get_min(vertex, &heapsize);
-	row = d * v.num;
-	for(i = row + 1; i < row + d; i++){
-		dist = u.dist + graph[row][row + i];
-	  if((&nodes[d%i].dist > dist) || (&nodes[d%i] == MAX_DIST)){
-	  	&nodes[d%i].dist = dist;
-	  	min_heapify(vertex, heapsize, heapsize);
-	  }	
+	u = get_min(vertex);
+	start = d * u.num;
+	for(i = start + 1; i < start + d; i++){
+		if((graph[i] != 0)){
+		 dist = u.dist + graph[i];
+		for(j = 0; j < heapsize; j++){
+		  if((vertex[j].num == i % d)&&(vertex[j].dist > dist)){
+		  	vertex[j].dist = dist;
+		  	min_heapify(vertex, 0);
+		  }	
+  		}
+  	  }
 	}
  }
  sum_dis = 0;
 for(i = 0; i < d; i++){
-	sum_dis = sum_dis + &nodes[i].dist;
+	sum_dis = sum_dis + vertex[i].dist;
 }
 return sum_dis;	 
 }
@@ -91,8 +94,9 @@ return sum_dis;
 
 int main(){
 char str[11], c;
-long long *graph;
+int *graph;
 int i, j;
+long int sum;
 i = 0;
 c = fgetc(stdin);
 while(c != ' '){
@@ -113,7 +117,7 @@ while(c != '\n'){
 str[i] = '\0';
 k = atoi(str);
 
-graph = malloc(sizeof(struct edge)*size);
+graph = malloc(sizeof(int)*size);
 c = fgetc(stdin);
 while(c != EOF){
   	if(c == 'A'){
@@ -133,9 +137,10 @@ while(c != EOF){
  		printf("%d\n", k);
   		printf("%d\n", d);
   		for(j = 0; j < size; j ++){
-  			  printf("%ld ", graph[j]);
+  			  printf("%d ", graph[j]);
 		  }
-
+    sum = djkstra(graph);
+    printf("\n%ld", sum);
 	  }
     else{
     	
@@ -144,6 +149,7 @@ while(c != EOF){
 
   
 }
+return 0;
 }
 
 
