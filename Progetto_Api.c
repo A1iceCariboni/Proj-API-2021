@@ -153,50 +153,66 @@ long long djkstra(long long graph[]){
 }
 
 
+int getInt(char str[]){
+	int i = 0, num = 0;
+	while((str[i] != '\n')&&(str[i] != '\0')){
+		 num = num * 10 + str[i] - '0';
+		 i++;
+	}
+	return num;
+}
+
+
 int main(){
-char str[11], c;
+char str[655360], num[10];
 long long *graph;
 struct topK *rank;
-int i, j;
+int i, j, y, w;
 long long sum;
-i = 0;
-c = fgetc(stdin);
-while(c != ' '){
-	str[i] = c;
-	c = fgetc(stdin);
-	i++;
-}
-d = atoi(str);
-size = d * d;
-c = fgetc(stdin);
-i = 0;
 
-while(c != '\n'){
-	str[i] = c;
-	c = fgetc(stdin);
+if(fgets(str, sizeof(str), stdin) == NULL) return 0;
+i = 0;
+j = 0;
+while(str[i] != ' '){
+	num[j] = str[i];
 	i++;
+	j++;
 }
-str[i] = '\0';
-k = atoi(str);
+num[j] = '\0';
+d = getInt(num);
+size = d * d;
+i++;
+j = 0;
+while(str[i] != '\n'){
+	num[j] = str[i];
+	i++;
+	j++;
+}
+num[j] = '\0';
+k = getInt(num);
 
 graph = malloc(sizeof(long long)*size);
 rank = malloc(sizeof(struct topK)*k);
 
-c = fgetc(stdin);
-while(c != EOF){
-  	if(c == 'A'){
-  		while(c != '\n') c = fgetc(stdin);
-  		
- 		for(j = 0; j < size; j++){
-		   	c = fgetc(stdin);
+if(fgets(str, sizeof(str), stdin) == NULL) return 0;
+while(str != NULL){
+  	if(strcmp(str, "AggiungiGrafo\n") == 0){
+  		y = 0;
+       for(w = 0; w < d; w++){
+	   if(fgets(str, sizeof(str), stdin) == NULL) return 0;
 			i = 0;
-  			while((c != ',') && (c != '\n')){
-  				str[i] = c;
-  				c = fgetc(stdin);
-  				i++;
-			  }
-			  str[i] = '\0';
-			  graph[j] = atol(str);
+			while(str[i - 1] != '\n'){
+				j = 0;
+	  			while((str[i] != ',') && (str[i] != '\n')){
+	  				num[j] = str[i];
+	  				i++;
+	  				j++;
+		        }
+		        num[j] = '\0';
+			    graph[y] = getInt(num);
+			    y++;
+			    i++;
+			}
 	    }
     	sum = djkstra(graph);
     	place_in_rank(rank, sum);
@@ -204,10 +220,10 @@ while(c != EOF){
     
 
     }else{
-    	while(c != '\n') c = fgetc(stdin);
     	print_rank(rank);
-        }
-		 c = fgetc(stdin);
+    }
+    
+	if(fgets(str, sizeof(str), stdin) == NULL) return 0;
 
   
 }
