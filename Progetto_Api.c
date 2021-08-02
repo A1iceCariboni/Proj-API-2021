@@ -35,13 +35,22 @@ int dx, sx, max;
 struct topK r;
    sx = 2 * n;
    dx = (2 * n) + 1;
-   if((sx < ranksize)&&(rank[sx].weight > rank[n].weight)){
-   		  max = sx;
-	}else{
-		max = n;
-	}
-	if((dx < ranksize) && (rank[dx].weight > rank[n].weight)){
-		max = dx;
+   if(((sx < ranksize)&&(rank[sx].weight > rank[n].weight))||((dx < ranksize) && (rank[dx].weight > rank[n].weight))){
+	   	if((sx < ranksize)&&(dx < ranksize)){
+	   		if(rank[sx].weight > rank[dx].weight){
+	   			max = sx;
+			 }else{
+			 	max = dx;
+			 }
+	    }else{
+	    	if(sx < ranksize){
+	    		max = sx;
+			}else{
+				max = dx;
+			}
+        }
+    }else{
+    	max = n;
 	}
 	if(max != n){
 	r = rank[max];
@@ -69,18 +78,8 @@ void place_in_rank(struct topK rank[], long long sum){
 		 }
 	}else{
 		if(sum < rank[0].weight){
-			rank[0] = rank[ranksize - 1];
-			ranksize --;
+			rank[0] = r;
 			max_heapify(rank, 0);
-			rank[ranksize] = r;
-			ranksize ++;
-		 	i = ranksize - 1;
-			 while((i > 0)	&& (rank[i/2].weight < rank[i].weight)){
-			 	r = rank[i/2];
-			 	rank[i/2] = rank[i];
-			 	rank[i] = r;
-			 	i = i/2;
-			 }
 		}
 	}
 }
@@ -90,8 +89,11 @@ void print_rank(struct topK rank[]){
 	for(i = 0; i < ranksize - 1; i++){
 		printf("%d ", rank[i].graph);
 	}
-        printf("%d\n", rank[ranksize - 1].graph);
-
+	if(ranksize > 0){
+	 printf("%d\n", rank[ranksize - 1].graph);
+    }else{
+ 	  printf("\n");
+	} 
 }
 
 
@@ -185,7 +187,7 @@ while(c != EOF){
   	if(c == 'A'){
   		while(c != '\n') c = fgetc(stdin);
   		
-  		for(j = 0; j < size; j++){
+ 		for(j = 0; j < size; j++){
 		   	c = fgetc(stdin);
 			i = 0;
   			while((c != ',') && (c != '\n')){
@@ -198,9 +200,8 @@ while(c != EOF){
 	    }
     	sum = djkstra(graph);
     	place_in_rank(rank, sum);
-    	printf("GraphCount = %d\n Sum = %lld\n",graphcount, sum);
-    	print_rank(rank);
  		graphcount++;
+    
 
     }else{
     	while(c != '\n') c = fgetc(stdin);
